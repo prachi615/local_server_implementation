@@ -9,7 +9,7 @@ from minio.error import S3Error
 
 # Create MinIO client
 minio_client = Minio(
-    "128.205.218.189:43369",  # MinIO server address
+    "128.205.218.189:9000",  # MinIO server address
     access_key="minioadmin",  # MinIO access key
     secret_key="minioadmin",  # MinIO secret key
     secure=False  # Set to True if using HTTPS
