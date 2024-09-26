@@ -9,9 +9,9 @@ from minio.error import S3Error
 
 # Create MinIO client
 minio_client = Minio(
-    "128.205.218.189:9000",  # MinIO server address
-    access_key="minioadmin",  # MinIO access key
-    secret_key="minioadmin",  # MinIO secret key
+    "100.100.100.100:9000",  # MinIO server address
+    access_key="minio",  # MinIO access key
+    secret_key="minio",  # MinIO secret key
     secure=False  # Set to True if using HTTPS
 )
 
@@ -34,7 +34,7 @@ def upload_to_minio(data, object_name, bucket_name="csi-data"):
 # Create ZMQ publisher
 ctx = zmq.Context()
 sock = ctx.socket(zmq.PUB)
-sock.connect("tcp://128.205.218.189:5678")  # Connect to the ZMQ subscriber
+sock.connect("tcp://100.100.100.100:1000")  # Connect to the ZMQ subscriber
 
 # Stores the computer's hostname
 host = b''
@@ -55,7 +55,7 @@ def csi_callback(msg):
     print(f"Data sent via ZMQ at {time.time()}")
 
     # Upload data to MinIO
-    object_name = f"csi_data_{int(time.time())}.bin"
+    object_name = f"csi_data_{int(time.time()*1000)}.bin"
     upload_to_minio(bstr, object_name)
 
 if __name__ == "__main__":
