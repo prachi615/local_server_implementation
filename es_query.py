@@ -1,76 +1,88 @@
 import json
-import time
-from io import BytesIO
-from elasticsearch import Elasticsearch
-import rospy
-from rf_msgs.msg import Wifi
+import struct
+from minio import Minio
+from minio.error import S3Error
+from elasticsearch import Elasticsearch, exceptions
 
-# Elasticsearch client
-es = Elasticsearch("http://localhost:9200")  # Update this with your Elasticsearch instance
+minio_client = Minio(
+    "128.205.218.189:9000",
+    access_key="minioadmin",
+    secret_key="minioadmin",
+    secure=False
+)
 
-# Function to deserialize the CSI data from the .bin file
-def deserialize_csi_data(data):
-    """Assumes the data is a serialized ROS Wifi message."""
+es = Elasticsearch("http://localhost:9200")
+
+def list_minio_objects(bucket_name="csi-data"):
     try:
-        wifi_msg = Wifi()  # Assuming Wifi is the correct ROS message type
-        wifi_msg.deserialize(data)
-        return wifi_msg
-    except Exception as e:
-        print(f"Failed to deserialize CSI data: {e}")
+        objects = minio_client.list_objects(bucket_name)
+        return [obj.object_name for obj in objects]
+    except S3Error as err:
+        print(f"MinIO Error: {err}")
+        return []
+
+def download_minio_object(bucket_name, object_name, download_path="/tmp/csi_data.bin"):
+    try:
+        minio_client.fget_object(bucket_name, object_name, download_path)
+        print(f"Downloaded {object_name} to {download_path}")
+        return download_path
+    except S3Error as err:
+        print(f"Error downloading {object_name}: {err}")
         return None
 
-# Function to index deserialized data into Elasticsearch
-def index_to_elasticsearch(index_name, wifi_data):
-    """Indexes the Wifi data to Elasticsearch."""
-    try:
-        # Prepare the document to index
+def parse_csi_data(file_content):
+    num_floats = len(file_content) // 4
+    data = struct.unpack(f'{num_floats}f', file_content)
+    return data
+
+def index_csi_data_to_elasticsearch(index_name, data):
+    for i, entry in enumerate(data):
         doc = {
-            'signal_strength': wifi_data.signal_strength,  # Example data
-            'timestamp': int(time.time()*1000)  # Use current time or a timestamp from the message
+            "csi_value": entry,
+            "timestamp": "2024-09-28T15:45:00"
         }
+        try:
+            es.index(index=index_name, body=doc)
+        except exceptions.ConnectionError as e:
+            print(f"Failed to index document {i}: {e}")
 
-        # Index the document into Elasticsearch
-        es.index(index=index_name, document=doc)
-        print(f"Data indexed to Elasticsearch: {doc}")
-    except Exception as e:
-        print(f"Failed to index data to Elasticsearch: {e}")
-
-# Function to extract data from MinIO and process it
-def process_minio_data(object_name, bucket_name="csi-data"):
-    """Extracts data from MinIO, deserializes it, and indexes it in Elasticsearch."""
+def query_elasticsearch(index_name, query):
     try:
-        # Fetch the object from MinIO (use existing minio_client)
-        response = minio_client.get_object(bucket_name, object_name)
-        data = response.read()
+        response = es.search(index=index_name, body=query)
+        return response['hits']['hits']
+    except exceptions.ConnectionError as e:
+        print(f"Failed to connect to Elasticsearch: {e}")
+        return []
 
-        # Deserialize the data
-        wifi_data = deserialize_csi_data(data)
-        
-        if wifi_data:
-            # Index the deserialized data into Elasticsearch
-            index_to_elasticsearch("csi-index", wifi_data)
-    except Exception as e:
-        print(f"Error processing MinIO data: {e}")
+def main():
+    bucket_name = "csi-data"
+    object_name = "csi_data_1727552221.bin"
+    objects = list_minio_objects(bucket_name)
+    print(f"Objects in bucket '{bucket_name}': {objects}")
 
-# Query Elasticsearch
-def query_elasticsearch(index_name):
-    """Queries Elasticsearch for indexed data."""
-    try:
-        query = {
+    download_path = download_minio_object(bucket_name, object_name)
+
+    if download_path:
+        with open(download_path, 'rb') as file:
+            file_content = file.read()
+            parsed_data = parse_csi_data(file_content)
+            print(f"Parsed Data (first 10 entries): {parsed_data[:10]}")
+            index_csi_data_to_elasticsearch("csi-index", parsed_data)
+
+    query = {
+        "query": {
             "match_all": {}
         }
-        response = es.search(index=index_name, query=query)
-        print(f"Query Results: {json.dumps(response, indent=2)}")
-    except Exception as e:
-        print(f"Failed to query Elasticsearch: {e}")
+    }
 
-# Example to process a specific .bin file from MinIO and query it
+    es_results = query_elasticsearch("csi-index", query)
+
+    if es_results:
+        print("Elasticsearch query results:")
+        for result in es_results:
+            print(json.dumps(result, indent=2))
+    else:
+        print("No results found in Elasticsearch.")
+
 if __name__ == "__main__":
-    # Assuming a specific file to process
-    object_name = "csi_data_1727301692564.bin"  # Replace with actual object names
-
-    # Process the CSI data from MinIO and index it in Elasticsearch
-    process_minio_data(object_name)
-
-    # Query the indexed data in Elasticsearch
-    query_elasticsearch("csi-index")
+    main()
