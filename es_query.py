@@ -5,13 +5,13 @@ from minio.error import S3Error
 from elasticsearch import Elasticsearch, exceptions
 
 minio_client = Minio(
-    "128.205.218.189:9000",
+    "100.100.100.100:9000",
     access_key="minioadmin",
     secret_key="minioadmin",
     secure=False
 )
 
-es = Elasticsearch("http://localhost:9200")
+es = Elasticsearch(“100.100.100.100:9200")
 
 def list_minio_objects(bucket_name="csi-data"):
     try:
@@ -56,7 +56,7 @@ def query_elasticsearch(index_name, query):
 
 def main():
     bucket_name = "csi-data"
-    object_name = "csi_data_1727552221.bin"
+    object_name = "csi_data_12345.bin"
     objects = list_minio_objects(bucket_name)
     print(f"Objects in bucket '{bucket_name}': {objects}")
 
