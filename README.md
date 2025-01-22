@@ -9,7 +9,6 @@ WiSenseHub is a scalable system designed to collect, process, and store WiFi and
 1. [Important Files](#important-files)
 2. [Configuration and Setup](#configuration-and-setup)
 3. [Usage Examples](#usage-examples)
-4. [Citations](#citations)
 
 
 ### Key Features
@@ -124,12 +123,26 @@ The code subscribes to the /csi topic and processes messages of type Wifi. Ensur
 rospy.Subscriber("/csi", Wifi, csi_callback)
 ```
 
-### Run the Code
 
-1. **Start MinIO and Elasticsearch servers** on your local machine.
-2. **Run the ROS publisher node** to send data to the subscriber.
-3. **Ensure a ZMQ subscriber is running** to receive and store the data in MinIO and Elasticsearch.
-4. **Verify data upload** to MinIO and check the indexed documents in Elasticsearch.
+### Usage Examples
+
+1. Start MinIO:
+    * Launch MinIO by running minio server /path/to/minio/data from the directory where MinIO is installed. Access MinIO via http://localhost:1200.
+
+2. Start Elasticsearch:
+    * Run Elasticsearch by executing bin/elasticsearch to start the server at http://localhost:1000.
+
+3. Run the ROS Publisher Node:
+    * Navigate to the ROS package directory where ros_publisher.py and ros_minio_publisher.py are located.
+    * Run rosrun <your_package_name> ros_publisher.py to start publishing the data.
+
+4. Start ZMQ Subscriber:
+    * Ensure the ZMQ subscriber is running to receive and process data from the publisher. The subscriber should save the data to MinIO and Elasticsearch.
+
+5. Verify Data:
+    * Check that the data has been uploaded to MinIO by visiting http://localhost:1200 and verify it in the Elasticsearch index by querying curl -X GET "localhost:1000/csi-index/_search?pretty".
+
+
 
 
 
