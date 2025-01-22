@@ -48,6 +48,15 @@ WiSenseHub is a scalable system designed to collect, process, and store WiFi and
 - **Fault-Tolerant System**  
   Designed with robust error-handling mechanisms to ensure continuous operation and automatic recovery in case of hardware or network failures.
 
+
+### Important Files
+
+These scripts form a complete pipeline:  
+1. **Data Collection**: `ros_publisher.py` streams real-time data from ROS to ZMQ.  
+2. **Data Storage**: `ros_minio_publisher.py` enables simultaneous real-time streaming and storage in MinIO.  
+3. **Data Querying and Analysis**: `minio_elasticsearch_handler.py` facilitates retrieval, parsing, indexing, and querying of stored data for insights and visualization.  
+
+
 ### Usage:
 
 ### Set Up:
