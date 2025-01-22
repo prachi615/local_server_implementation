@@ -91,7 +91,7 @@ Ensure the following software is installed and properly configured on your local
 
 ### MinIO Client Configuration
 
-```python
+ ```python
 
 from minio import Minio
 # MinIO Client Configuration
@@ -100,10 +100,7 @@ minio_client = Minio(
     access_key="value",
     secret_key="value",
     secure=False # Set to True if using HTTPS
-)```
+)
+  ```
 
-
-### Usage:
-
-### Citations:
 
