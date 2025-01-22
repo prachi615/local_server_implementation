@@ -125,10 +125,10 @@ rospy.Subscriber("/csi", Wifi, csi_callback)
 ```
 
 ### Run the code 
-1.Start MinIO and Elasticsearch servers on your local machine.
-2.Run the ROS publisher node to send data to the subscriber.
-3.Ensure a ZMQ subscriber is running to receive and store the data in MinIO and Elasticsearch.
-4.Verify data upload to MinIO and check the indexed documents in Elasticsearch.
+1. **Start MinIO and Elasticsearch servers on your local machine.
+2. **Run the ROS publisher node to send data to the subscriber.
+3. **Ensure a ZMQ subscriber is running to receive and store the data in MinIO and Elasticsearch.
+4. **Verify data upload to MinIO and check the indexed documents in Elasticsearch.
 
 
 
