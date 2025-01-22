@@ -5,9 +5,9 @@ WiSenseHub is a scalable system designed to collect, process, and store WiFi and
 
 
 ## Table of Contents:
-1. [Key Features](#key-features)
-2. [Usage](#usage)
-3. [Set Up](#set-up)
+1. [Important Files](#
+2. [Configuration and Setup]
+3. [Usage Examples]
 4. [Citations](#citations)
 
 ### Key Features:
