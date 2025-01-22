@@ -56,6 +56,39 @@ These scripts form a complete pipeline:
 2. **Data Storage**: `ros_minio_publisher.py` enables simultaneous real-time streaming and storage in MinIO.  
 3. **Data Querying and Analysis**: `minio_elasticsearch_handler.py` facilitates retrieval, parsing, indexing, and querying of stored data for insights and visualization.  
 
+## **Configuration and Setup**
+
+To set up and run the code on your local server, follow these steps. The configuration and setup are tailored for a local environment where we are using MinIO for storage, Elasticsearch for querying, and ZMQ for communication.
+
+### **Prerequisites**
+
+Ensure the following software is installed and properly configured on your local server:
+
+1. **ROS (Robot Operating System)**: Ensure you have ROS installed. The code uses `rospy` to interact with ROS topics.
+   - For installation instructions, visit [ROS Installation Guide](http://wiki.ros.org/ROS/Installation).
+   
+2. **MinIO**: This is an open-source object storage service used to store data. It is configured locally for this setup.
+   - You can follow the installation instructions from [MinIO's official guide](https://docs.min.io/docs/minio-quickstart-guide).
+
+3. **Elasticsearch**: This is used for indexing and querying data.
+   - Install Elasticsearch by following the official guide: [Installing Elasticsearch](https://www.elastic.co/guide/en/elasticsearch/reference/current/install-elasticsearch.html).
+
+4. **ZMQ (ZeroMQ)**: For communication between your ROS nodes and the subscriber, install `zmq` on your local server.
+   - Install `pyzmq` for Python by running:  
+     ```
+     pip install pyzmq
+     ```
+
+5. **Python Libraries**: The following Python libraries are required for running the code:
+   - `rospy`
+   - `zmq`
+   - `minio`
+   - `elasticsearch`
+   - `struct`
+   - `rf_msgs` (this is a custom message package; ensure it is available on your system)
+
+
+
 
 ### Usage:
 
