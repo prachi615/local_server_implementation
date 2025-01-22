@@ -100,9 +100,7 @@ minio_client = Minio(
     access_key="value",
     secret_key="value",
     secure=False # Set to True if using HTTPS
-)
-
-
+)```
 
 
 ### Usage:
