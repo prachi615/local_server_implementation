@@ -89,17 +89,17 @@ Ensure the following software is installed and properly configured on your local
      
 ### Configuration Steps
 
-1. MinIO Configuration:
-The ros_minio_publisher.py uses the MinIO client for uploading data.
+### MinIO Client Configuration
+
+```python
 
 from minio import Minio
-
 # MinIO Client Configuration
 minio_client = Minio(
     "localhost:1200",
-    access_key="minio_1234",
-    secret_key="minio_1234",
-    secure=False  # Set to True if using HTTPS
+    access_key="value",
+    secret_key="value",
+    secure=False # Set to True if using HTTPS
 )
 
 
