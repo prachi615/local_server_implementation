@@ -87,7 +87,14 @@ Ensure the following software is installed and properly configured on your local
    - `struct`
    - `rf_msgs`
 
+##Configuration Files
 
+1. MinIO Configuration: The ros_minio_publisher.py uses the MinIO client for uploading data. Ensure you have the correct credentials set up for MinIO in your code: python CopyEdit   minio_client = Minio(
+2.     "localhost:9000",  # MinIO server address
+3.     access_key="minio",  # MinIO access key
+4.     secret_key="minio",  # MinIO secret key
+5.     secure=False  # Set to True if using HTTPS
+6. ) 
 
 
 ### Usage:
