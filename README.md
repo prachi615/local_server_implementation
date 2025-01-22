@@ -85,7 +85,7 @@ Ensure the following software is installed and properly configured on your local
    - `minio`
    - `elasticsearch`
    - `struct`
-   - `rf_msgs` (this is a custom message package; ensure it is available on your system)
+   - `rf_msgs`
 
 
 
